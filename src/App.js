@@ -1,58 +1,105 @@
-import React from 'react';
-import logo from './logo.svg';
-import { Counter } from './features/counter/Counter';
-import './App.css';
+import React from "react";
+import { useState, useEffect } from "react";
+import Layout from "./components/Layout";
+import MovieCard from "./components/MovieCard";
+import Slider from "./components/Slider";
+import Loading from "./components/Loading";
+import ScrollTop from "./components/ScrollTop";
+import { connect } from "react-redux";
+import { fetchDayMovies } from "./app/day/dayActions";
+import { fetchWeekMovies } from "./app/week/weekActions";
 
-function App() {
+function App({
+  fetchTrendingMoviesDay,
+  trendingMoviesDay,
+  fetchTrendingMoviesWeek,
+  trendingMoviesWeek,
+}) {
+  const [slideImages, setSlideImages] = useState([]);
+
+  useEffect(() => {
+    fetchTrendingMoviesDay();
+    fetchTrendingMoviesWeek();
+  }, []);
+
+  useEffect(() => {
+    setSlideImages(
+      trendingMoviesDay.dayMovies.slice(0, 5).map((movie) => ({
+        backdrop: movie.backdrop,
+        title: movie.title,
+        id: movie.id,
+      }))
+    );
+  }, [trendingMoviesDay]);
+
+  if (trendingMoviesWeek.loading || trendingMoviesDay.loading) {
+    return (
+      <Layout>
+        <Loading />
+      </Layout>
+    );
+  }
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <Counter />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <span>
-          <span>Learn </span>
-          <a
-            className="App-link"
-            href="https://reactjs.org/"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            React
-          </a>
-          <span>, </span>
-          <a
-            className="App-link"
-            href="https://redux.js.org/"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Redux
-          </a>
-          <span>, </span>
-          <a
-            className="App-link"
-            href="https://redux-toolkit.js.org/"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Redux Toolkit
-          </a>
-          ,<span> and </span>
-          <a
-            className="App-link"
-            href="https://react-redux.js.org/"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            React Redux
-          </a>
-        </span>
-      </header>
-    </div>
+    <Layout>
+      <ScrollTop />
+      <div className="">
+        <div className="px-4 2xl:px-60 py-4 flex flex-col gap-4">
+          <div className="">
+            <Slider slideImages={slideImages} />
+          </div>
+          <h1 className="text-5xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-indigo-500">
+            MOST POPULAR
+          </h1>
+          <div className="moviegrid">
+            {trendingMoviesDay.dayMovies.map((movie, index) => (
+              <MovieCard
+                index={index}
+                key={movie.id}
+                title={movie.title}
+                likes={movie.vote}
+                image={movie.poster}
+                date={movie.date}
+                overview={movie.overview}
+                id={movie.id}
+              />
+            ))}
+          </div>
+          <h1 className="text-5xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-purple-600 to-pink-500">
+            TRENDING THIS WEEK
+          </h1>
+          <div className="moviegrid">
+            {trendingMoviesWeek.weekMovies.map((movie, index) => (
+              <MovieCard
+                index={index}
+                key={movie.id}
+                title={movie.title}
+                likes={movie.vote}
+                image={movie.poster}
+                date={movie.date}
+                overview={movie.overview}
+                id={movie.id}
+              />
+            ))}
+          </div>
+        </div>
+      </div>
+    </Layout>
   );
 }
 
-export default App;
+const mapStateToProps = (state) => {
+  return {
+    trendingMoviesDay: state.day,
+    trendingMoviesWeek: state.week,
+  };
+};
+
+const mapDispatchToProps = (dispatch) => {
+  return {
+    fetchTrendingMoviesDay: () => dispatch(fetchDayMovies()),
+    fetchTrendingMoviesWeek: () => dispatch(fetchWeekMovies()),
+  };
+};
+
+export default connect(mapStateToProps, mapDispatchToProps)(App);
