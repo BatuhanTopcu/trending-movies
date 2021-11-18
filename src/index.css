@@ -68,3 +68,7 @@
     top: 0px;
   }
 }
+
+.mh {
+  min-height: 480px;
+}

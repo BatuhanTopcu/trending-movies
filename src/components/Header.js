@@ -57,14 +57,18 @@ const Header = () => {
             value={searchKey}
             autoComplete="off"
             onChange={handleChange}
-            onKeyPress={(e) => {
-              if (e.key === "Enter") {
-                navigate("/search/" + searchKey, { replace: true });
-              }
-            }}
+            onKeyPress={(e) =>
+              searchKey.length > 0 && e.key === "Enter"
+                ? navigate("/search/" + searchKey, { replace: true })
+                : null
+            }
           />
           <button
-            onClick={() => navigate("/search/" + searchKey, { replace: true })}
+            onClick={() =>
+              searchKey.length > 0
+                ? navigate("/search/" + searchKey, { replace: true })
+                : null
+            }
             className="inline-flex items-center bg-gray-100 border-0 px-1 sm:px-3 py-1 focus:outline-none hover:bg-gray-200 rounded-r-lg text-sm sm:text-lg shippori tr"
           >
             Search
