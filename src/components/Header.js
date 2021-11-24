@@ -1,9 +1,52 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import axios from "axios";
+import SearchCard from "./SearchCard";
 
 const Header = () => {
   const navigate = useNavigate();
   const [searchKey, setSearchKey] = useState("");
+  const [searchResults, setSearchResults] = useState([]);
+  const [show, setShow] = useState(false);
+
+  useEffect(() => {
+    console.log(show);
+  }, [show]);
+
+  useEffect(() => {
+    if (searchKey.length === 0) {
+      setSearchResults([]);
+      return null;
+    }
+    const delayDebounceFn = setTimeout(async () => {
+      await axios
+        .get("https://api.themoviedb.org/3/search/movie", {
+          params: {
+            api_key: "d4f8b9b9e09e960aa569095fe6080358",
+            query: searchKey,
+          },
+        })
+        .then(function (response) {
+          if (response.data.results.length > 0) {
+            const results = response.data.results.map((movie) => ({
+              id: movie.id,
+              title: movie.title,
+              poster: "https://image.tmdb.org/t/p/w500" + movie.poster_path,
+              backdrop: "https://image.tmdb.org/t/p/w500" + movie.backdrop_path,
+              date: movie.release_date.substring(0, 4),
+            }));
+            setSearchResults(results.slice(0, 5));
+          } else {
+            setSearchResults([]);
+          }
+        })
+        .catch(function (error) {
+          setSearchResults([]);
+        });
+    }, 500);
+
+    return () => clearTimeout(delayDebounceFn);
+  }, [searchKey]);
 
   const handleChange = (event) => {
     setSearchKey(event.target.value);
@@ -48,14 +91,20 @@ const Header = () => {
             </Link>
           </nav>
         </div>
-        <div className="flex rounded-lg focus-within:ring-4 focus-within:ring-gray-600 tr">
+        <div className="flex rounded-lg focus-within:ring-4 focus-within:ring-gray-600 tr w-min relative">
           <input
             type="text"
             name="search"
             className="bg-gray-200 rounded-l-lg px-1 sm:px-2 shippori text-sm sm:text-lg py-1 outline-none"
             placeholder="Search movies"
-            value={searchKey}
             autoComplete="off"
+            value={searchKey}
+            onFocus={() => setShow(true)}
+            onBlur={() =>
+              setTimeout(async () => {
+                setShow(false);
+              }, 100)
+            }
             onChange={handleChange}
             onKeyPress={(e) =>
               searchKey.length > 0 && e.key === "Enter"
@@ -73,6 +122,19 @@ const Header = () => {
           >
             Search
           </button>
+          {searchResults.length > 0 && show && (
+            <div className="w-full h-min flex flex-col gap-2 bg-gray-200 shadow-xl absolute top-0 mt-8 md:mt-12 left-0 z-30 rounded-lg p-2">
+              {searchResults.map((movie, index) => (
+                <SearchCard
+                  title={movie.title}
+                  id={movie.id}
+                  backdrop={movie.backdrop}
+                  date={movie.date}
+                  key={index}
+                />
+              ))}
+            </div>
+          )}
         </div>
       </div>
     </header>

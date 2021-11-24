@@ -15,7 +15,7 @@ const MovieCard = ({ title, likes, image, date, overview, index, id }) => {
             )}
           </div>
           <div
-            className={`absolute bottom-0 left-0 ${
+            className={`absolute bottom-0 left-0 scale-75 transform ${
               image !== "https://image.tmdb.org/t/p/w500null"
                 ? "-mb-4 ml-3"
                 : "-mb-6 ml-3"

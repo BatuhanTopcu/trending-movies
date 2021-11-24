@@ -34,17 +34,17 @@ export const searchReducer = (state = initialState, action) => {
         loading: true,
       };
     }
-    case FETCH_SEARCH_SUCCESS: {
-      return {
-        ...state,
-        searchResults: action.payload,
-        loading: false,
-      };
-    }
     case FETCH_SEARCH_FAILURE: {
       return {
         error: action.payload,
         singleMovie: [],
+        loading: false,
+      };
+    }
+    case FETCH_SEARCH_SUCCESS: {
+      return {
+        ...state,
+        searchResults: action.payload,
         loading: false,
       };
     }
