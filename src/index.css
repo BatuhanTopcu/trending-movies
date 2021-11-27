@@ -42,12 +42,6 @@
   animation-fill-mode: forwards;
 }
 
-.fadeLoadSlow {
-  animation: fadeInAnimation ease-inbor 0.5s;
-  animation-iteration-count: 1;
-  animation-fill-mode: forwards;
-}
-
 @keyframes fadeInAnimation {
   0% {
     opacity: 0;
@@ -77,4 +71,25 @@
 
 .mh {
   min-height: 480px;
+}
+
+.horizontal-scroll {
+  -webkit-overflow-scrolling: touch;
+}
+
+.horizontal-scroll::-webkit-scrollbar {
+  @apply bg-transparent h-3;
+}
+.horizontal-scroll::-webkit-scrollbar-thumb:horizontal {
+  @apply bg-gray-400 rounded-xl;
+}
+
+@media screen and (max-width: 500px) {
+  .horizontal-scroll::-webkit-scrollbar {
+    display: none;
+  }
+}
+
+.movierow {
+  @apply overflow-x-auto flex flex-nowrap gap-4 px-4 pb-4 horizontal-scroll;
 }

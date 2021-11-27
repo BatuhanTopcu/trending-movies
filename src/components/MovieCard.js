@@ -3,7 +3,7 @@ import { Link } from "react-router-dom";
 const MovieCard = ({ title, likes, image, date, overview, index, id }) => {
   return (
     <Link to={`/movies/${id}`}>
-      <div className="bg-white hover:bg-black shadow-xl hover:shadow-none cursor-pointer w-60 mh rounded-3xl flex flex-col items-center justify-center tr group">
+      <div className="bg-white hover:bg-black shadow-md hover:shadow-none cursor-pointer w-60 mh rounded-3xl flex flex-col items-center justify-center tr group">
         <div className="relative mt-2 mx-2">
           <div className="w-56 rounded-2xl overflow-hidden">
             {image !== "https://image.tmdb.org/t/p/w500null" && (

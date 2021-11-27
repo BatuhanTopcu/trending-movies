@@ -5,6 +5,7 @@ import MovieCard from "./components/MovieCard";
 import Slider from "./components/Slider";
 import Loading from "./components/Loading";
 import ScrollTop from "./components/ScrollTop";
+import GridSwitch from "./components/GridSwitch";
 import { connect } from "react-redux";
 import { fetchDayMovies } from "./app/day/dayActions";
 import { fetchWeekMovies } from "./app/week/weekActions";
@@ -14,6 +15,7 @@ function App({
   trendingMoviesDay,
   fetchTrendingMoviesWeek,
   trendingMoviesWeek,
+  grid,
 }) {
   const [slideImages, setSlideImages] = useState([]);
 
@@ -48,10 +50,13 @@ function App({
           <div className="">
             <Slider slideImages={slideImages} />
           </div>
+          <div className="ml-auto mr-4">
+            <GridSwitch />
+          </div>
           <h1 className="text-5xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-indigo-500">
             MOST POPULAR
           </h1>
-          <div className="moviegrid">
+          <div className={`${grid ? "moviegrid" : "movierow"} tr`}>
             {trendingMoviesDay.dayMovies.map((movie, index) => (
               <MovieCard
                 index={index}
@@ -68,7 +73,7 @@ function App({
           <h1 className="text-5xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-purple-600 to-pink-500">
             TRENDING THIS WEEK
           </h1>
-          <div className="moviegrid">
+          <div className={`${grid ? "moviegrid" : "movierow"} tr`}>
             {trendingMoviesWeek.weekMovies.map((movie, index) => (
               <MovieCard
                 index={index}
@@ -92,6 +97,7 @@ const mapStateToProps = (state) => {
   return {
     trendingMoviesDay: state.day,
     trendingMoviesWeek: state.week,
+    grid: state.grid.grid,
   };
 };
 
